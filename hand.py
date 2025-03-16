@@ -23,6 +23,16 @@ while True:
     
     if results.multi_hand_landmarks:
         for hand_lms in results.multi_hand_landmarks:
+            for index, lm in enumerate(hand_lms.landmark):
+                height, width, channels = frame.shape # from frame
+                cx, cy = int(lm.x*width), int(lm.y*height)  # landmark position in frame
+                #print(index, cx, cy) #prints id and its position in frame
+
+                if index == 0 :
+                    cv2.circle(frame, (cx, cy), 10, (255, 0, 255), cv2.FILLED)
+
+
+
             mp_draw.draw_landmarks(frame, hand_lms,mp_hands.HAND_CONNECTIONS) # draws land marks
             
 
@@ -34,5 +44,5 @@ while True:
     #display
     cv2.putText(frame, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 2) 
     cv2.imshow("image", frame) 
-    
+
     cv2.waitKey(1)
