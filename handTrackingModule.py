@@ -7,12 +7,18 @@ class HandDetector():
     def __init__(self, mode=False, max_hands=2, detection_conf=0.5, track_conf=0.5):
         self.mode = mode
         self.max_hands = max_hands
-        self.detection_conf = int(detection_conf)
-        self.track_conf = int(track_conf)
+        self.detection_conf = detection_conf
+        self.track_conf = track_conf
 
         # initialize mp
         self.mp_hands = mp.solutions.hands
-        self.hands = self.mp_hands.Hands(self.mode, self.max_hands, self.detection_conf, self.track_conf)
+        # self.hands = self.mp_hands.Hands(self.mode, self.max_hands, self.detection_conf, self.track_conf)
+        self.hands = self.mp_hands.Hands(
+            static_image_mode=self.mode,
+            max_num_hands=int(self.max_hands), # Must be an integer
+            min_detection_confidence=float(self.detection_conf),
+            min_tracking_confidence=float(self.track_conf)
+        )
         self.mp_draw = mp.solutions.drawing_utils
 
     def find_hands(self,frame,draw=True):
@@ -44,47 +50,4 @@ class HandDetector():
             
         return lm_list
 
-  
 
-    #frame rate
-    # current_time = time.time()
-    # fps = 1/ (current_time - prev_time)
-    # prev_time = current_time
-
-    # #display
-    # cv2.putText(frame, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 2) 
-    # cv2.imshow("image", frame) 
-
-    # cv2.waitKey(1)
-
-def main():
-
-    prev_time = 0
-    current_time = 0
-    cap = cv2.VideoCapture(0) #targets webcam
-    detector=HandDetector()
-
-    while True:
-        success, frame = cap.read() # reads image
-        frame = detector.find_hands(frame)
-        lm_list = detector.find_position(frame)
-        if len(lm_list) != 0:
-            print(lm_list[4])
-
-         #frame rate
-        current_time = time.time()
-        fps = 1/ (current_time - prev_time )
-        prev_time = current_time
-
-        #display
-        cv2.putText(frame, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 2) 
-        cv2.imshow("image", frame) 
-
-        cv2.waitKey(1)
-
-
-
-
-
-if __name__ == "__main__":
-    main()
